@@ -3,15 +3,17 @@ import json
 
 def lambda_handler(event, context):
     # Entrada (json)
-    # Asumiendo que el body viene como un string JSON
     try:
-        body = json.loads(event.get('body', '{}'))
+        # --- CORRECCIÓN ---
+        # event['body'] YA es un diccionario, no necesitamos json.loads()
+        body = event.get('body')
         if not body:
              raise ValueError("Cuerpo de solicitud vacío")
         
         tenant_id = body['tenant_id']
         alumno_id = body['alumno_id']
-    except (json.JSONDecodeError, KeyError, ValueError) as e:
+        
+    except (KeyError, ValueError) as e:
         return {
             'statusCode': 400,
             'body': json.dumps(f'Error en parámetros de entrada: {str(e)}')
@@ -33,6 +35,7 @@ def lambda_handler(event, context):
         
         if item:
             # Alumno encontrado
+            # API Gateway espera un 'body' que sea un string JSON
             return {
                 'statusCode': 200,
                 'body': json.dumps(item)
