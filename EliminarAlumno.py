@@ -5,13 +5,15 @@ from botocore.exceptions import ClientError
 def lambda_handler(event, context):
     # Entrada (json)
     try:
-        body = json.loads(event.get('body', '{}'))
+        # --- CORRECCIÓN ---
+        body = event.get('body')
         if not body:
              raise ValueError("Cuerpo de solicitud vacío")
         
         tenant_id = body['tenant_id']
         alumno_id = body['alumno_id']
-    except (json.JSONDecodeError, KeyError, ValueError) as e:
+        
+    except (KeyError, ValueError) as e:
         return {
             'statusCode': 400,
             'body': json.dumps(f'Error en parámetros de entrada: {str(e)}')
@@ -27,11 +29,10 @@ def lambda_handler(event, context):
                 'tenant_id': tenant_id,
                 'alumno_id': alumno_id
             },
-            ReturnValues='ALL_OLD'  # Devuelve el item que se borró
+            ReturnValues='ALL_OLD'
         )
         
         if 'Attributes' in response:
-            # El item existía y fue borrado
             return {
                 'statusCode': 200,
                 'body': json.dumps({
@@ -40,7 +41,6 @@ def lambda_handler(event, context):
                 })
             }
         else:
-            # El item no existía
             return {
                 'statusCode': 404,
                 'body': json.dumps({'message': 'Alumno no encontrado, no se eliminó nada'})
