@@ -25,15 +25,15 @@ functions:
           method: post
           cors: true
           integration: lambda
-
-  # --- NUEVAS FUNCIONES ---
+  
+  # --- Funciones con métodos ajustados ---
 
   buscar:
     handler: BuscarAlumno.lambda_handler
     events:
       - http:
           path: /alumnos/buscar
-          method: post
+          method: post  # Mantenido como POST
           cors: true
           integration: lambda
   modificar:
@@ -41,7 +41,7 @@ functions:
     events:
       - http:
           path: /alumnos/modificar
-          method: post # Puedes cambiar a 'put' si prefieres ser más RESTful
+          method: put
           cors: true
           integration: lambda
   eliminar:
@@ -49,7 +49,7 @@ functions:
     events:
       - http:
           path: /alumnos/eliminar
-          method: post # Puedes cambiar a 'delete' si prefieres ser más RESTful
+          method: delete
           cors: true
           integration: lambda
 
